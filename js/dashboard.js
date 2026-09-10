@@ -1,340 +1,844 @@
+/* =========================================================
+   TAXINEXO — DASHBOARD
+========================================================= */
+
+
+/* =========================================================
+   INICIALIZAÇÃO
+========================================================= */
+
 document.addEventListener("DOMContentLoaded", () => {
+
+    // Só executa no dashboard
+    if (!document.getElementById("section-dashboard")) {
+        return;
+    }
+
     inicializarNavegacao();
-    inicializarMenuMobile();
-    inicializarTema();
-    inicializarBackup();
-    inicializarImportacao();
+
+    inicializarBotoesLaterais();
+
+    atualizarDashboard();
 
     // Abre a seção indicada na URL
-    const hash = window.location.hash.replace("#", "");
+    const hash =
+        window.location.hash
+            .replace("#", "")
+            .trim();
 
-    if (hash && document.getElementById(`section-${hash}`)) {
-        mostrarSecao(hash);
+    if (hash) {
+        abrirSecao(hash);
     } else {
-        mostrarSecao("dashboard");
+        abrirSecao("dashboard");
     }
+
 });
 
 
 /* =========================================================
-   NAVEGAÇÃO
+   NAVEGAÇÃO DO DASHBOARD
 ========================================================= */
 
 function inicializarNavegacao() {
 
     const links =
-        document.querySelectorAll(".sidebar .nav-link");
+        document.querySelectorAll(
+            ".sidebar-nav .nav-link"
+        );
 
     links.forEach(link => {
 
-        link.addEventListener("click", event => {
+        link.addEventListener(
+            "click",
+            function(event) {
 
-            event.preventDefault();
+                /*
+                    IMPORTANTE:
 
-            const section =
-                link.dataset.section;
+                    Impede o navegador de tentar
+                    carregar dashboard.html novamente.
 
-            if (!section) return;
+                    Isso corrige o erro:
 
-            mostrarSecao(section);
+                    Unsafe attempt to load URL
+                    file:///...
+                */
 
-            // Atualiza a URL
-            window.history.replaceState(
-                null,
-                "",
-                `#${section}`
-            );
+                event.preventDefault();
 
-            // Fecha menu no celular
-            const sidebar =
-                document.querySelector(".sidebar");
+                const section =
+                    this.dataset.section;
 
-            if (sidebar) {
-                sidebar.classList.remove("open");
+                if (!section) {
+                    return;
+                }
+
+                abrirSecao(section);
+
+                /*
+                    Atualiza o #dashboard,
+                    #carros, #carteira etc.
+                    sem recarregar a página.
+                */
+
+                history.replaceState(
+                    null,
+                    "",
+                    `#${section}`
+                );
+
             }
-        });
+        );
+
     });
+
 }
 
 
 /* =========================================================
-   MOSTRAR SEÇÃO
+   ABRIR SEÇÃO
 ========================================================= */
 
-function mostrarSecao(sectionName) {
+function abrirSecao(nomeSecao) {
 
-    const sections =
-        document.querySelectorAll(".content-section");
+    const secoes =
+        document.querySelectorAll(
+            ".content-section"
+        );
 
     const links =
-        document.querySelectorAll(".sidebar .nav-link");
+        document.querySelectorAll(
+            ".sidebar-nav .nav-link"
+        );
 
-    let encontrou = false;
 
-    sections.forEach(section => {
+    /*
+        Primeiro escondemos todas
+    */
 
-        const sectionId =
-            section.id.replace("section-", "");
+    secoes.forEach(secao => {
 
-        if (sectionId === sectionName) {
+        secao.classList.remove(
+            "active"
+        );
 
-            section.classList.add("active");
-
-            encontrou = true;
-
-        } else {
-
-            section.classList.remove("active");
-        }
     });
 
+
+    /*
+        Removemos active dos menus
+    */
 
     links.forEach(link => {
 
-        if (link.dataset.section === sectionName) {
+        link.classList.remove(
+            "active"
+        );
 
-            link.classList.add("active");
-
-        } else {
-
-            link.classList.remove("active");
-        }
     });
 
 
-    if (!encontrou) {
+    /*
+        Procura a seção
+    */
+
+    const secao =
+        document.getElementById(
+            `section-${nomeSecao}`
+        );
+
+
+    /*
+        Procura o link correspondente
+    */
+
+    const linkAtivo =
+        document.querySelector(
+            `.sidebar-nav .nav-link[data-section="${nomeSecao}"]`
+        );
+
+
+    /*
+        Se a seção não existir,
+        volta para Dashboard.
+    */
+
+    if (!secao) {
+
+        const dashboard =
+            document.getElementById(
+                "section-dashboard"
+            );
+
+        if (dashboard) {
+            dashboard.classList.add(
+                "active"
+            );
+        }
+
+        const dashboardLink =
+            document.querySelector(
+                '.sidebar-nav .nav-link[data-section="dashboard"]'
+            );
+
+        if (dashboardLink) {
+            dashboardLink.classList.add(
+                "active"
+            );
+        }
+
+        atualizarTitulo(
+            "dashboard"
+        );
+
         return;
     }
 
 
-    // Atualiza título
-    const titles = {
+    /*
+        Mostra a seção
+    */
 
-        dashboard: "Dashboard",
-
-        carros: "Veículos",
-
-        carteira: "Carteira",
-
-        historico: "Histórico"
-    };
+    secao.classList.add(
+        "active"
+    );
 
 
-    const pageTitle =
-        document.getElementById("pageTitle");
+    /*
+        Ativa o menu
+    */
 
-    if (pageTitle) {
+    if (linkAtivo) {
 
-        pageTitle.textContent =
-            titles[sectionName] || "Dashboard";
+        linkAtivo.classList.add(
+            "active"
+        );
+
     }
 
 
-    // Atualiza dados quando entrar em cada seção
+    /*
+        Atualiza título
+    */
+
+    atualizarTitulo(
+        nomeSecao
+    );
+
+
+    /*
+        Atualiza conteúdos quando necessário
+    */
 
     if (
-        sectionName === "carros" &&
+        nomeSecao === "carros" &&
         typeof renderizarCarros === "function"
     ) {
 
         renderizarCarros();
+
     }
 
 
     if (
-        sectionName === "carteira" &&
+        nomeSecao === "carteira" &&
         typeof renderizarCarteira === "function"
     ) {
 
         renderizarCarteira();
+
     }
 
 
     if (
-        sectionName === "historico" &&
+        nomeSecao === "historico" &&
         typeof renderizarHistorico === "function"
     ) {
 
         renderizarHistorico();
+
     }
 
 
+    /*
+        Atualiza gráficos ao voltar
+        para o Dashboard.
+    */
+
     if (
-        sectionName === "dashboard" &&
-        typeof atualizarDashboard === "function"
+        nomeSecao === "dashboard"
     ) {
 
         atualizarDashboard();
+
     }
+
 }
 
 
 /* =========================================================
-   MENU MOBILE
+   TÍTULO DA PÁGINA
 ========================================================= */
 
-function inicializarMenuMobile() {
+function atualizarTitulo(
+    nomeSecao
+) {
 
-    const button =
-        document.getElementById("mobileMenuBtn");
+    const pageTitle =
+        document.getElementById(
+            "pageTitle"
+        );
+
+    if (!pageTitle) {
+        return;
+    }
+
+
+    const titulos = {
+
+        dashboard:
+            "Dashboard",
+
+        carros:
+            "Veículos",
+
+        carteira:
+            "Carteira",
+
+        historico:
+            "Histórico"
+
+    };
+
+
+    pageTitle.textContent =
+        titulos[nomeSecao]
+        || "Dashboard";
+
+}
+
+
+/* =========================================================
+   NAVEGAÇÃO PELO HASH
+========================================================= */
+
+window.addEventListener(
+    "hashchange",
+    () => {
+
+        const hash =
+            window.location.hash
+                .replace("#", "")
+                .trim();
+
+        abrirSecao(
+            hash || "dashboard"
+        );
+
+    }
+);
+
+
+/* =========================================================
+   BOTÕES DA SIDEBAR
+========================================================= */
+
+function inicializarBotoesLaterais() {
+
+    /*
+        MENU MOBILE
+    */
+
+    const mobileMenuBtn =
+        document.getElementById(
+            "mobileMenuBtn"
+        );
 
     const sidebar =
-        document.querySelector(".sidebar");
+        document.querySelector(
+            ".sidebar"
+        );
 
-    if (!button || !sidebar) {
-        return;
+
+    if (
+        mobileMenuBtn &&
+        sidebar
+    ) {
+
+        mobileMenuBtn.addEventListener(
+            "click",
+            () => {
+
+                sidebar.classList.toggle(
+                    "show"
+                );
+
+            }
+        );
+
     }
 
-    button.addEventListener("click", () => {
 
-        sidebar.classList.toggle("open");
+    /*
+        Fecha menu mobile ao clicar
+        em uma opção.
+    */
+
+    const links =
+        document.querySelectorAll(
+            ".sidebar-nav .nav-link"
+        );
+
+    links.forEach(link => {
+
+        link.addEventListener(
+            "click",
+            () => {
+
+                if (sidebar) {
+
+                    sidebar.classList.remove(
+                        "show"
+                    );
+
+                }
+
+            }
+        );
 
     });
+
 }
 
 
 /* =========================================================
-   MODO ESCURO
+   ATUALIZAR DASHBOARD
 ========================================================= */
 
-function inicializarTema() {
+function atualizarDashboard() {
 
-    const button =
-        document.getElementById("themeToggle");
-
-    if (!button) {
-        return;
-    }
-
-    button.addEventListener("click", () => {
-
-        document.body.classList.toggle("light-mode");
-
-        const isLight =
-            document.body.classList.contains("light-mode");
-
-        const data = getData();
-
-        data.theme =
-            isLight ? "light" : "dark";
-
-        saveData(data);
-
-        atualizarBotaoTema();
-    });
-
-
-    const data = getData();
-
-    if (data.theme === "light") {
-
-        document.body.classList.add("light-mode");
-    }
-
-    atualizarBotaoTema();
-}
-
-
-function atualizarBotaoTema() {
-
-    const button =
-        document.getElementById("themeToggle");
-
-    if (!button) return;
-
-    const isLight =
-        document.body.classList.contains("light-mode");
-
-    if (isLight) {
-
-        button.innerHTML = `
-            <i class="bi bi-sun"></i>
-            Modo claro
-        `;
-
-    } else {
-
-        button.innerHTML = `
-            <i class="bi bi-moon"></i>
-            Modo escuro
-        `;
-    }
-}
-
-
-/* =========================================================
-   BACKUP
-========================================================= */
-
-function inicializarBackup() {
-
-    const button =
-        document.getElementById("backupBtn");
-
-    if (!button) return;
-
-    button.addEventListener("click", () => {
-
-        backupData();
-
-    });
-}
-
-
-/* =========================================================
-   IMPORTAÇÃO
-========================================================= */
-
-function inicializarImportacao() {
-
-    const button =
-        document.getElementById("importBtn");
-
-    const input =
-        document.getElementById("importFile");
-
-    if (!button || !input) {
+    if (
+        typeof getData !== "function"
+    ) {
         return;
     }
 
 
-    button.addEventListener("click", () => {
+    const data =
+        getData();
 
-        input.click();
+
+    if (!data) {
+        return;
+    }
+
+
+    const carros =
+        Array.isArray(data.carros)
+            ? data.carros
+            : [];
+
+
+    const history =
+        Array.isArray(data.history)
+            ? data.history
+            : [];
+
+
+    /* =====================================================
+       CARTEIRA
+    ===================================================== */
+
+    let totalDepositado = 0;
+    let totalSacado = 0;
+
+
+    history.forEach(item => {
+
+        const tipo =
+            String(
+                item.type || ""
+            )
+            .toLowerCase()
+            .trim();
+
+
+        const valor =
+            Number(
+                item.value
+            ) || 0;
+
+
+        if (
+            tipo === "depósito" ||
+            tipo === "deposito"
+        ) {
+
+            totalDepositado += valor;
+
+        }
+
+
+        if (
+            tipo === "saque" ||
+            tipo === "retirada"
+        ) {
+
+            totalSacado += valor;
+
+        }
 
     });
 
 
-    input.addEventListener("change", async event => {
+    /* =====================================================
+       INVESTIMENTOS
+    ===================================================== */
 
-        const file =
-            event.target.files[0];
+    let totalInvestido = 0;
 
-        if (!file) {
+    let lucroPrevistoMin = 0;
+    let lucroPrevistoMax = 0;
+
+    let rendimentoPrevistoMin = 0;
+    let rendimentoPrevistoMax = 0;
+
+
+    carros.forEach(car => {
+
+        const valorCompra =
+            Number(
+                car.valorCompra
+            ) || 0;
+
+
+        totalInvestido +=
+            valorCompra;
+
+
+        /*
+            Usa o cálculo do carros.js.
+
+            Dessa forma o domingo
+            é respeitado.
+        */
+
+        if (
+            typeof calcularCarro ===
+            "function"
+        ) {
+
+            const calc =
+                calcularCarro(car);
+
+
+            lucroPrevistoMin +=
+                Number(
+                    calc.lucroMin
+                ) || 0;
+
+
+            lucroPrevistoMax +=
+                Number(
+                    calc.lucroMax
+                ) || 0;
+
+
+            rendimentoPrevistoMin +=
+                Number(
+                    calc.rendimentoMin
+                ) || 0;
+
+
+            rendimentoPrevistoMax +=
+                Number(
+                    calc.rendimentoMax
+                ) || 0;
+
+        }
+
+    });
+
+
+    /* =====================================================
+       LUCRO RECEBIDO
+    ===================================================== */
+
+    let lucroRecebido = 0;
+
+
+    history.forEach(item => {
+
+        const tipo =
+            String(
+                item.type || ""
+            )
+            .toLowerCase()
+            .trim();
+
+
+        const valor =
+            Number(
+                item.value
+            ) || 0;
+
+
+        if (
+            tipo === "recebimento" ||
+            tipo === "rendimento" ||
+            tipo === "lucro"
+        ) {
+
+            lucroRecebido +=
+                valor;
+
+        }
+
+    });
+
+
+    /* =====================================================
+       SALDO ATUAL
+    ===================================================== */
+
+    const saldoAtual =
+        totalDepositado
+        + lucroRecebido
+        - totalSacado
+        - totalInvestido;
+
+
+    /* =====================================================
+       ROI
+    ===================================================== */
+
+    const lucroPrevistoMedio =
+        (
+            lucroPrevistoMin +
+            lucroPrevistoMax
+        ) / 2;
+
+
+    let roi = 0;
+
+
+    if (
+        totalInvestido > 0
+    ) {
+
+        roi =
+            (
+                lucroPrevistoMedio /
+                totalInvestido
+            ) * 100;
+
+    }
+
+
+    /* =====================================================
+       VEÍCULOS ATIVOS
+    ===================================================== */
+
+    let veiculosAtivos = 0;
+
+
+    carros.forEach(car => {
+
+        if (!car.dataFim) {
             return;
         }
 
 
-        try {
+        const hoje =
+            new Date();
 
-            await importData(file);
+        hoje.setHours(
+            0,
+            0,
+            0,
+            0
+        );
 
-            alert(
-                "Backup importado com sucesso!"
+
+        const fim =
+            new Date(
+                `${car.dataFim}T00:00:00`
             );
 
-            window.location.reload();
 
-        } catch (error) {
+        if (
+            fim > hoje
+        ) {
 
-            console.error(error);
+            veiculosAtivos++;
 
-            alert(
-                "Não foi possível importar o backup."
-            );
         }
 
-
-        input.value = "";
     });
+
+
+    /* =====================================================
+       CARDS
+    ===================================================== */
+
+    definirTexto(
+        "saldoAtual",
+        formatCurrency(
+            saldoAtual
+        )
+    );
+
+
+    definirTexto(
+        "totalDepositado",
+        formatCurrency(
+            totalDepositado
+        )
+    );
+
+
+    definirTexto(
+        "totalSacado",
+        formatCurrency(
+            totalSacado
+        )
+    );
+
+
+    definirTexto(
+        "totalInvestido",
+        formatCurrency(
+            totalInvestido
+        )
+    );
+
+
+    definirTexto(
+        "lucroPrevisto",
+        `${formatCurrency(
+            lucroPrevistoMin
+        )} - ${formatCurrency(
+            lucroPrevistoMax
+        )}`
+    );
+
+
+    definirTexto(
+        "lucroRecebido",
+        formatCurrency(
+            lucroRecebido
+        )
+    );
+
+
+    definirTexto(
+        "roi",
+        `${roi.toFixed(2)}%`
+    );
+
+
+    definirTexto(
+        "veiculosAtivos",
+        String(
+            veiculosAtivos
+        )
+    );
+
+
+    /* =====================================================
+       GRÁFICOS
+    ===================================================== */
+
+    atualizarGraficosDashboard(
+        carros,
+        totalInvestido,
+        rendimentoPrevistoMin,
+        rendimentoPrevistoMax
+    );
+
 }
+
+
+/* =========================================================
+   DEFINIR TEXTO
+========================================================= */
+
+function definirTexto(
+    id,
+    valor
+) {
+
+    const elemento =
+        document.getElementById(
+            id
+        );
+
+
+    if (!elemento) {
+        return;
+    }
+
+
+    elemento.textContent =
+        valor;
+
+}
+
+
+/* =========================================================
+   GRÁFICOS
+========================================================= */
+
+function atualizarGraficosDashboard(
+    carros,
+    totalInvestido,
+    rendimentoMin,
+    rendimentoMax
+) {
+
+    if (
+        typeof graficoLucro ===
+        "function"
+    ) {
+
+        graficoLucro();
+
+    }
+
+
+    if (
+        typeof graficoInvestimento ===
+        "function"
+    ) {
+
+        graficoInvestimento();
+
+    }
+
+
+    if (
+        typeof graficoCarteira ===
+        "function"
+    ) {
+
+        graficoCarteira();
+
+    }
+
+}
+
+
+/* =========================================================
+   ATUALIZAÇÃO GLOBAL
+========================================================= */
+
+window.atualizarDashboard =
+    atualizarDashboard;
+
+
+/* =========================================================
+   EXPOR NAVEGAÇÃO
+========================================================= */
+
+window.abrirSecao =
+    abrirSecao;
