@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>TAXINEXO</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+        rel="stylesheet"
+    >
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<div class="app-container">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+
+        <div class="sidebar-brand">
+            <div class="brand-logo small">MK</div>
+            <span>TAXINEXO</span>
+        </div>
+
+        <nav class="sidebar-nav">
+
+            <a
+                href="#dashboard"
+                class="nav-link active"
+                data-section="dashboard"
+            >
+                <i class="bi bi-grid"></i>
+                Dashboard
+            </a>
+
+            <a
+                href="#carros"
+                class="nav-link"
+                data-section="carros"
+            >
+                <i class="bi bi-car-front"></i>
+                Veículos
+            </a>
+
+            <a
+                href="#carteira"
+                class="nav-link"
+                data-section="carteira"
+            >
+                <i class="bi bi-wallet2"></i>
+                Carteira
+            </a>
+
+            <a
+                href="#historico"
+                class="nav-link"
+                data-section="historico"
+            >
+                <i class="bi bi-clock-history"></i>
+                Histórico
+            </a>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+
+            <button
+                type="button"
+                class="btn btn-outline-light w-100 mb-2"
+                id="themeToggle"
+            >
+                <i class="bi bi-moon"></i>
+                Modo escuro
+            </button>
+
+            <button
+                type="button"
+                class="btn btn-outline-light w-100 mb-2"
+                id="backupBtn"
+            >
+                <i class="bi bi-download"></i>
+                Backup
+            </button>
+
+            <button
+                type="button"
+                class="btn btn-outline-light w-100 mb-2"
+                id="importBtn"
+            >
+                <i class="bi bi-upload"></i>
+                Importar
+            </button>
+
+            <input
+                type="file"
+                id="importFile"
+                accept=".json"
+                hidden
+            >
+
+            <button
+                type="button"
+                class="btn btn-outline-danger w-100"
+                id="logoutBtn"
+            >
+                <i class="bi bi-box-arrow-right"></i>
+                Sair
+            </button>
+
+        </div>
+
+    </aside>
+
+
+    <!-- CONTEÚDO -->
+    <main class="main-content">
+
+        <!-- HEADER MOBILE -->
+        <header class="topbar">
+
+            <button
+                type="button"
+                class="btn btn-outline-secondary"
+                id="mobileMenuBtn"
+            >
+                <i class="bi bi-list"></i>
+            </button>
+
+            <div>
+                <strong id="pageTitle">
+                    Dashboard
+                </strong>
+            </div>
+
+        </header>
+
+
+        <!-- ========================= -->
+        <!-- DASHBOARD -->
+        <!-- ========================= -->
+
+        <section
+            id="section-dashboard"
+            class="content-section active"
+        >
+
+            <div class="container-fluid">
+
+                <div class="mb-4">
+                    <h2>Dashboard</h2>
+                    <p class="text-secondary">
+                        Visão geral dos seus investimentos.
+                    </p>
+                </div>
+
+
+                <div class="row g-3">
+
+                    <div class="col-12 col-md-6 col-xl-3">
+                        <div class="card dashboard-card">
+                            <div class="card-body">
+                                <span class="text-secondary">
+                                    Saldo Atual
+                                </span>
+
+                                <h3 id="saldoAtual">
+                                    R$ 0,00
+                                </h3>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="col-12 col-md-6 col-xl-3">
+                        <div class="card dashboard-card">
+                            <div class="card-body">
+                                <span class="text-secondary">
+                                    Total Depositado
+                                </span>
+
+                                <h3 id="totalDepositado">
+                                    R$ 0,00
+                                </h3>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="col-12 col-md-6 col-xl-3">
+                        <div class="card dashboard-card">
+                            <div class="card-body">
+                                <span class="text-secondary">
+                                    Total Sacado
+                                </span>
+
+                                <h3 id="totalSacado">
+                                    R$ 0,00
+                                </h3>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="col-12 col-md-6 col-xl-3">
+                        <div class="card dashboard-card">
+                            <div class="card-body">
+                                <span class="text-secondary">
+                                    Total Investido
+                                </span>
+
+                                <h3 id="totalInvestido">
+                                    R$ 0,00
+                                </h3>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="col-12 col-md-6 col-xl-3">
+                        <div class="card dashboard-card">
+                            <div class="card-body">
+                                <span class="text-secondary">
+                                    Lucro Previsto
+                                </span>
+
+                                <h3 id="lucroPrevisto">
+                                    R$ 0,00
+                                </h3>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="col-12 col-md-6 col-xl-3">
+                        <div class="card dashboard-card">
+                            <div class="card-body">
+                                <span class="text-secondary">
+                                    Lucro Recebido
+                                </span>
+
+                                <h3 id="lucroRecebido">
+                                    R$ 0,00
+                                </h3>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="col-12 col-md-6 col-xl-3">
+                        <div class="card dashboard-card">
+                            <div class="card-body">
+                                <span class="text-secondary">
+                                    ROI
+                                </span>
+
+                                <h3 id="roi">
+                                    0%
+                                </h3>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="col-12 col-md-6 col-xl-3">
+                        <div class="card dashboard-card">
+                            <div class="card-body">
+                                <span class="text-secondary">
+                                    Veículos Ativos
+                                </span>
+
+                                <h3 id="veiculosAtivos">
+                                    0
+                                </h3>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ========================= -->
+        <!-- VEÍCULOS -->
+        <!-- ========================= -->
+
+        <section
+            id="section-carros"
+            class="content-section"
+        >
+
+            <div class="container-fluid">
+
+                <div class="d-flex justify-content-between align-items-center mb-4">
+
+                    <div>
+                        <h2>Veículos</h2>
+
+                        <p class="text-secondary mb-0">
+                            Gerencie seus veículos e rendimentos.
+                        </p>
+                    </div>
+
+                    <button
+                        type="button"
+                        class="btn btn-primary"
+                        id="novoCarroBtn"
+                    >
+                        <i class="bi bi-plus-lg"></i>
+                        Novo veículo
+                    </button>
+
+                </div>
+
+
+                <div class="card">
+
+                    <div class="card-body">
+
+                        <div class="table-responsive">
+
+                            <table class="table align-middle">
+
+                                <thead>
+                                    <tr>
+                                        <th>Veículo</th>
+                                        <th>Compra</th>
+                                        <th>Período</th>
+                                        <th>Renda total</th>
+                                        <th>Lucro previsto</th>
+                                        <th>Status</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody id="carrosTableBody">
+                                    <!-- Preenchido pelo carros.js -->
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ========================= -->
+        <!-- CARTEIRA -->
+        <!-- ========================= -->
+
+        <section
+            id="section-carteira"
+            class="content-section"
+        >
+
+            <div class="container-fluid">
+
+                <div class="mb-4">
+                    <h2>Carteira</h2>
+                    <p class="text-secondary">
+                        Controle seus depósitos e saques.
+                    </p>
+                </div>
+
+                <div class="row g-3">
+
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <span class="text-secondary">
+                                    Saldo disponível
+                                </span>
+
+                                <h3 id="carteiraSaldo">
+                                    R$ 0,00
+                                </h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <span class="text-secondary">
+                                    Total depositado
+                                </span>
+
+                                <h3 id="carteiraDepositado">
+                                    R$ 0,00
+                                </h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <span class="text-secondary">
+                                    Total sacado
+                                </span>
+
+                                <h3 id="carteiraSacado">
+                                    R$ 0,00
+                                </h3>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="mt-4">
+
+                    <button
+                        class="btn btn-success me-2"
+                        id="depositarBtn"
+                    >
+                        Depositar
+                    </button>
+
+                    <button
+                        class="btn btn-danger"
+                        id="sacarBtn"
+                    >
+                        Sacar
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ========================= -->
+        <!-- HISTÓRICO -->
+        <!-- ========================= -->
+
+        <section
+            id="section-historico"
+            class="content-section"
+        >
+
+            <div class="container-fluid">
+
+                <div class="mb-4">
+
+                    <h2>Histórico</h2>
+
+                    <p class="text-secondary">
+                        Histórico financeiro.
+                    </p>
+
+                </div>
+
+                <div class="card">
+
+                    <div class="card-body">
+
+                        <div class="table-responsive">
+
+                            <table class="table">
+
+                                <thead>
+
+                                    <tr>
+                                        <th>Data</th>
+                                        <th>Tipo</th>
+                                        <th>Descrição</th>
+                                        <th>Valor</th>
+                                    </tr>
+
+                                </thead>
+
+                                <tbody id="historicoTableBody">
+                                    <!-- Preenchido pelo sistema -->
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<!-- ========================= -->
+<!-- MODAL VEÍCULO -->
+<!-- ========================= -->
+
+<div
+    class="modal fade"
+    id="carroModal"
+    tabindex="-1"
+    aria-hidden="true"
+>
+
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title">
+                    <span id="carroModalTitle">
+                        Novo veículo
+                    </span>
+                </h5>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Fechar"
+                ></button>
+
+            </div>
+
+
+            <form id="carroForm">
+
+                <div class="modal-body">
+
+                    <input
+                        type="hidden"
+                        id="carroId"
+                    >
+
+
+                    <div class="row g-3">
+
+                        <!-- NOME -->
+
+                        <div class="col-md-6">
+
+                            <label
+                                for="carroNome"
+                                class="form-label"
+                            >
+                                Nome do veículo
+                            </label>
+
+                            <input
+                                type="text"
+                                id="carroNome"
+                                class="form-control"
+                                required
+                            >
+
+                        </div>
+
+
+                        <!-- VALOR -->
+
+                        <div class="col-md-6">
+
+                            <label
+                                for="carroValor"
+                                class="form-label"
+                            >
+                                Valor de compra
+                            </label>
+
+                            <input
+                                type="number"
+                                id="carroValor"
+                                class="form-control"
+                                min="0"
+                                step="0.01"
+                                required
+                            >
+
+                        </div>
+
+
+                        <!-- DATA COMPRA -->
+
+                        <div class="col-md-6">
+
+                            <label
+                                for="carroDataCompra"
+                                class="form-label"
+                            >
+                                Data da compra
+                            </label>
+
+                            <input
+                                type="date"
+                                id="carroDataCompra"
+                                class="form-control"
+                                required
+                            >
+
+                        </div>
+
+
+                        <!-- DATA FIM -->
+
+                        <div class="col-md-6">
+
+                            <label
+                                for="carroDataFim"
+                                class="form-label"
+                            >
+                                Data de término
+                            </label>
+
+                            <input
+                                type="date"
+                                id="carroDataFim"
+                                class="form-control"
+                                required
+                            >
+
+                        </div>
+
+
+                        <!-- NOVO CAMPO -->
+
+                        <div class="col-md-6">
+
+                            <label
+                                for="carroRendaTotalMin"
+                                class="form-label"
+                            >
+                                Renda total mínima
+                            </label>
+
+                            <div class="input-group">
+
+                                <span class="input-group-text">
+                                    R$
+                                </span>
+
+                                <input
+                                    type="number"
+                                    id="carroRendaTotalMin"
+                                    class="form-control"
+                                    min="0"
+                                    step="0.01"
+                                    required
+                                >
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- NOVO CAMPO -->
+
+                        <div class="col-md-6">
+
+                            <label
+                                for="carroRendaTotalMax"
+                                class="form-label"
+                            >
+                                Renda total máxima
+                            </label>
+
+                            <div class="input-group">
+
+                                <span class="input-group-text">
+                                    R$
+                                </span>
+
+                                <input
+                                    type="number"
+                                    id="carroRendaTotalMax"
+                                    class="form-control"
+                                    min="0"
+                                    step="0.01"
+                                    required
+                                >
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- DOMINGO -->
+
+                        <div class="col-md-6">
+
+                            <label
+                                for="carroTrabalhaDomingo"
+                                class="form-label"
+                            >
+                                Seu veículo trabalha domingo?
+                            </label>
+
+                            <select
+                                id="carroTrabalhaDomingo"
+                                class="form-select"
+                                required
+                            >
+
+                                <option value="true">
+                                    Sim
+                                </option>
+
+                                <option value="false">
+                                    Não
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="modal-footer">
+
+                    <button
+                        type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal"
+                    >
+                        Cancelar
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                    >
+                        Salvar veículo
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- SCRIPTS -->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script src="js/storage.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/carros.js"></script>
+<script src="js/carteira.js"></script>
+<script src="js/charts.js"></script>
+<script src="js/dashboard.js"></script>
+
+</body>
+</html>
